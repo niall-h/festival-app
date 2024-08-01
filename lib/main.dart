@@ -1,12 +1,25 @@
-import 'package:festival_app/screens/login.dart';
-import 'package:festival_app/screens/signup.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:festival_app/auth/pages/login.dart';
+import 'package:festival_app/pages/home.dart';
+import 'package:festival_app/auth/pages/splash_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+const SUPABASE_URL = "https://akisxlurkddltplbucvl.supabase.co";
+const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFraXN4bHVya2RkbHRwbGJ1Y3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQ5Nzg5NjEsImV4cCI6MjAzMDU1NDk2MX0.9MJMqfzLzT0Vx68YtLFq8eEp1QbpZ540iIK-LfWbb9k";
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
+  );
+
   runApp(const MyApp());
 }
+
+final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -31,79 +44,12 @@ class MyApp extends StatelessWidget {
       title: 'Festival Planner App',
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  'Welcome to Festival Planning App',
-                  style: theme.textTheme.displayLarge!
-                      .copyWith(color: theme.colorScheme.primary),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            SafeArea(
-              child: Column(
-                children: [
-                  FilledButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginPage()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 60),
-                    ),
-                    child: const Text(
-                      "Log In",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignupPage()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 60),
-                    ),
-                    child: const Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      initialRoute: '/',
+      routes: {
+        "/": (_) => const SplashPage(),
+        "/login": (_) => const LoginPage(),
+        "/home": (_) => const HomePage(),
+      },
     );
   }
 }
